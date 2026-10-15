@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070713">
+  <meta name="description" content="Turn your imagination into animated movie adventures with ZIP AI.">
+  <title>ZIP AI — Animated Movie Studio</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home">ZIP<span>AI</span><small>MOVIE STUDIO</small></a>
+
+    <nav class="nav-links">
+      <a href="#home" class="active">Home</a>
+      <a href="#create">Create Movie</a>
+      <a href="#features">Features</a>
+    </nav>
+
+    <span class="status"><i></i> Studio Preview</span>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-copy">
+        <div class="eyebrow">✦ YOUR IMAGINATION, ANIMATED</div>
+
+        <h1>Turn your ideas into <span>animated movies.</span></h1>
+
+        <p>
+          Your story, your characters, your world.
+          Start with one simple idea and build an animated adventure
+          with ZIP AI.
+        </p>
+
+        <a class="primary-btn" href="#create">
+          Create your movie <span>→</span>
+        </a>
+
+        <div class="hero-stats">
+          <div><strong>01</strong><span>Tell your story</span></div>
+          <div><strong>02</strong><span>Design your world</span></div>
+          <div><strong>03</strong><span>Plan your movie</span></div>
+        </div>
+      </div>
+
+      <div class="hero-art">
+        <div class="sun"></div>
+        <div class="hill hill-back"></div>
+        <div class="hill hill-front"></div>
+        <div class="character character-one">✦</div>
+        <div class="character character-two">✧</div>
+        <div class="art-caption">
+          <span>YOUR NEXT ADVENTURE</span>
+          <strong>Starts with a story.</strong>
+        </div>
+        <div class="art-badge">✦ ZIP ORIGINAL</div>
+      </div>
+    </section>
+
+    <section class="create" id="create">
+      <div class="section-heading">
+        <span class="number">01</span>
+        <div>
+          <h2>Let's make a movie</h2>
+          <p>Give your imagination a starting point.</p>
+        </div>
+      </div>
+
+      <div class="studio-grid">
+        <section class="form-card story-panel">
+          <div class="panel-heading">
+            <span class="panel-icon">✍️</span>
+            <div>
+              <h3>Your story</h3>
+              <p>Every great movie starts somewhere.</p>
+            </div>
+          </div>
+
+          <label for="title">MOVIE TITLE <span>(OPTIONAL)</span></label>
+          <input id="title" maxlength="100" placeholder="The Last Hope">
+
+          <label>CHOOSE YOUR STARTING POINT</label>
+          <div class="choice-grid">
+            <button class="choice selected" data-mode="idea" type="button">
+              <span>💡</span>
+              <strong>Short idea</strong>
+              <small>Build from a simple concept</small>
+            </button>
+
+            <button class="choice" data-mode="full" type="button">
+              <span>📖</span>
+              <strong>Full story</strong>
+              <small>Plan scenes from your story</small>
+            </button>
+          </div>
+
+          <label for="story">TELL US WHAT HAPPENS</label>
+          <textarea id="story" maxlength="12000" rows="7"
+            placeholder="A young hero discovers a mysterious power, meets unexpected friends, and faces a challenge that changes everything..."></textarea>
+
+          <div class="input-footer">
+            <span id="count">0 / 12000</span>
+            <span>Your story, your rules ✨</span>
+          </div>
+
+          <label>NEED AN IDEA?</label>
+          <div class="template-grid">
+            <button class="template" type="button" data-template="Action">⚔️ Action</button>
+            <button class="template" type="button" data-template="Adventure">🧭 Adventure</button>
+            <button class="template" type="button" data-template="Romance">💗 Romance</button>
+            <button class="template" type="button" data-template="Comedy">😂 Comedy</button>
+            <button class="template" type="button" data-template="Fantasy">✨ Fantasy</button>
+            <button class="template" type="button" data-template="Mystery">🔍 Mystery</button>
+          </div>
+
+          <button id="generate" class="primary-btn full">
+            Build my movie plan <span>→</span>
+          </button>
+
+          <p class="disclaimer">
+            Story planning is available in this prototype. Actual AI-generated
+            animation will require a connected generation service.
+          </p>
+        </section>
+
+        <aside class="studio-side">
+          <section class="form-card customize-panel">
+            <div class="panel-heading">
+              <span class="panel-icon">🎨</span>
+              <div>
+                <h3>Customize your movie</h3>
+                <p>Choose the direction of your film.</p>
+              </div>
+            </div>
+
+            <label for="style">ANIMATION STYLE</label>
+            <select id="style">
+              <option value="2D Cartoon">🎨 2D Cartoon</option>
+              <option value="Anime">⚡ Anime</option>
+              <option value="Comic Book">💥 Comic Book</option>
+              <option value="Storybook">📚 Storybook</option>
+              <option value="3D Animation">🪄 3D Animation</option>
+            </select>
+
+            <label for="genre">MOVIE GENRE</label>
+            <select id="genre">
+              <option>Adventure</option>
+              <option>Action</option>
+              <option>Comedy</option>
+              <option>Fantasy</option>
+              <option>Romance</option>
+              <option>Mystery</option>
+              <option>Horror</option>
+              <option>Drama</option>
+            </select>
+
+            <label for="duration">MOVIE LENGTH</label>
+            <select id="duration">
+              <option value="Short film">Short film · 1–5 minutes</option>
+              <option value="Mini movie">Mini movie · 5–15 minutes</option>
+              <option value="Feature film">Feature film · 30+ minutes</option>
+            </select>
+
+            <label for="language">LANGUAGE</label>
+            <select id="language">
+              <option>English</option>
+              <option>Nigerian Pidgin</option>
+              <option>Yoruba</option>
+              <option>Igbo</option>
+              <option>Hausa</option>
+            </select>
+
+            <div class="character-preview">
+              <div class="character-avatar">🧑🏽‍🚀</div>
+              <div>
+                <strong>Your movie universe</strong>
+                <p>Characters and scene designs come next.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="preview-panel">
+            <div class="preview-top">
+              <div>
+                <span class="preview-kicker">YOUR WORKSPACE</span>
+                <h3>Movie preview</h3>
+              </div>
+              <span class="preview-status">PREVIEW</span>
+            </div>
+
+            <div class="preview-screen">
+              <div class="preview-sun"></div>
+              <div class="preview-mountains"></div>
+              <div class="preview-play">▶</div>
+              <div class="preview-caption">Your story begins here.</div>
+            </div>
+
+            <div class="preview-bottom">
+              <span>🎬 Scene preview</span>
+              <span>ZIP AI Studio</span>
+            </div>
+
+            <p class="preview-note">
+              This is an illustrative preview, not a generated movie.
+            </p>
+          </section>
+        </aside>
+      </div>
+    </section>
+     <section class="create" id="characters">
+  <div class="section-heading">
+    <span class="number">02</span>
+    <div>
+      <h2>Character Studio</h2>
+      <p>Bring the heroes and villains of your story to life.</p>
+    </div>
+  </div>
+
+  <div class="studio-grid">
+    <section class="form-card">
+      <div class="panel-heading">
+        <span class="panel-icon">🎭</span>
+        <div>
+          <h3>Create a character</h3>
+          <p>Describe the character you imagine.</p>
+        </div>
+      </div>
+
+      <form id="character-form">
+        <label for="character-name">CHARACTER NAME</label>
+        <input id="character-name" maxlength="80"
+          placeholder="e.g. Aiko Tanaka" required>
+
+        <label for="character-role">CHARACTER ROLE</label>
+        <select id="character-role">
+          <option>Hero</option>
+          <option>Villain</option>
+          <option>Sidekick</option>
+          <option>Mentor</option>
+          <option>Supporting character</option>
+        </select>
+
+        <label for="character-age">AGE</label>
+        <input id="character-age" maxlength="30"
+          placeholder="e.g. 19 years old">
+
+        <label for="character-appearance">PHYSICAL APPEARANCE</label>
+        <textarea id="character-appearance" rows="4" maxlength="1500"
+          placeholder="Hair, eyes, clothing, body type, accessories..."></textarea>
+
+        <label for="character-personality">PERSONALITY</label>
+        <textarea id="character-personality" rows="3" maxlength="1000"
+          placeholder="Brave, funny, mysterious, intelligent..."></textarea>
+
+        <label for="character-style">ART STYLE</label>
+        <select id="character-style">
+          <option>Anime</option>
+          <option>2D Cartoon</option>
+          <option>3D Animation</option>
+          <option>Comic Book</option>
+          <option>Storybook</option>
+        </select>
+
+        <button class="primary-btn full" type="submit">
+          Create character prompt →
+        </button>
+      </form>
+    </section>
+
+    <aside class="form-card">
+      <div class="panel-heading">
+        <span class="panel-icon">✨</span>
+        <div>
+          <h3>Character preview</h3>
+          <p>Your character design prompt.</p>
+        </div>
+      </div>
+
+      <div id="character-preview" class="character-result">
+        <div class="character-avatar">🎭</div>
+        <p>Your character design will appear here.</p>
+      </div>
+
+      <button id="save-character" class="primary-btn full"
+        type="button" disabled>
+        Save character
+      </button>
+
+      <p class="disclaimer">
+        This creates a visual prompt, not an actual character image.
+      </p>
+    </aside>
+  </div>
+
+  <section class="form-card" style="margin-top:24px">
+    <div class="panel-heading">
+      <span class="panel-icon">📚</span>
+      <div>
+        <h3>Your characters</h3>
+        <p>Characters you've saved in this session.</p>
+      </div>
+    </div>
+    <div id="character-list" class="character-list">
+      <p>No characters saved yet.</p>
+    </div>
+  </section>
+</section>
+    <section id="result" class="result" hidden>
+      <div class="section-heading">
+        <span class="number">02</span>
+        <div>
+          <h2>Your movie plan</h2>
+          <p id="result-subtitle"></p>
+        </div>
+      </div>
+      <div id="result-content" class="result-card"></div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="section-heading">
+        <span class="number">03</span>
+        <div>
+          <h2>Inside the ZIP AI vision</h2>
+          <p>The tools we're building toward.</p>
+        </div>
+      </div>
+
+      <div class="feature-grid">
+        <article>
+          <span>📝</span>
+          <h3>AI Screenwriter</h3>
+          <p>Develop stories into scripts, scenes, and dialogue.</p>
+        </article>
+
+        <article>
+          <span>🎭</span>
+          <h3>Character Studio</h3>
+          <p>Build memorable characters with consistent appearances.</p>
+        </article>
+
+        <article>
+          <span>🎬</span>
+          <h3>Scene Creation</h3>
+          <p>Prepare visual descriptions for every scene.</p>
+        </article>
+
+        <article>
+          <span>🎵</span>
+          <h3>Sound & Editing</h3>
+          <p>Work toward combining animation, voices, and music.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="#home">ZIP<span>AI</span></a>
+    <p>Your story. Your world. Your movie.</p>
+    <small>Currently in prototype development.</small>
+  </footer>
+  <!-- ZIP AI Image Studio -->
+<section class="create" id="image-studio">
+  <div class="form-card">
+    <h2>🎨 AI Image Studio</h2>
+    <p>Bring your movie ideas to life with AI-generated images.</p>
+
+    <label for="image-prompt">Describe your image</label>
+    <textarea
+      id="image-prompt"
+      rows="5"
+      maxlength="2000"
+      placeholder="A cinematic 3D animated African city at sunset, vibrant colors, detailed environments..."
+    ></textarea>
+
+    <button id="generate-image" class="primary-btn full">
+      Generate Image
+    </button>
+
+    <p id="image-status" role="status" aria-live="polite"></p>
+
+    <div id="image-result" hidden>
+      <img
+        id="generated-image"
+        alt="AI-generated image"
+        style="display:block;width:100%;max-width:700px;margin:20px auto;border-radius:16px;"
+      >
+
+      <a
+        id="download-image"
+        class="primary-btn full"
+        href="#"
+        download="zip-ai-image.png"
+        style="display:block;text-align:center;text-decoration:none;"
+      >Download Image</a>
+    </div>
+  </div>
+</section>
+  <script src="/js/app.js"></script>
+</body>
+</html>
