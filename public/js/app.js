@@ -479,3 +479,186 @@ generate.addEventListener("click", async () => {
     }
   });
 })();
+// ZIP AI — AI MOVIE MAKER
+(() => {
+  const buildButton = document.getElementById("build-scenes");
+  const status = document.getElementById("scene-status");
+  const results = document.getElementById("scene-results");
+  const downloadButton = document.getElementById("download-scene-plan");
+
+  if (!buildButton || !status || !results || !downloadButton) return;
+
+  let currentPlan = null;
+
+  const escapeText = (value) => {
+    const div = document.createElement("div");
+    div.textContent = String(value ?? "");
+    return div.innerHTML;
+  };
+
+  buildButton.addEventListener("click", async () => {
+    const screenplayElement = document.getElementById("result-content");
+    const screenplay = screenplayElement?.innerText?.trim();
+
+    if (!screenplay || screenplay.length < 20) {
+      status.textContent = "⚠️ Generate a screenplay first, then build your scenes.";
+      return;
+    }
+
+    buildButton.disabled = true;
+    downloadButton.hidden = true;
+    results.innerHTML = "";
+    status.textContent = "🎬 Planning your movie scenes... This may take a little while.";
+
+    try {
+      const response = await fetch("/api/scene-plan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          screenplay,
+          style: document.getElementById("style")?.value || "2D Cartoon",
+          language: document.getElementById("language")?.value || "English"
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Could not build the scene plan.");
+      }
+
+      if (!Array.isArray(data.scenes) || data.scenes.length === 0) {
+        throw new Error("The AI returned no scenes. Please try again.");
+      }
+
+      currentPlan = data;
+
+      results.innerHTML = `
+        <h3>${escapeText(data.movieTitle || "Your Movie")}</h3>
+        <p>${data.scenes.length} scenes created. Generate illustrations for individual scenes below.</p>
+        ${data.scenes.map((scene, index) => `
+          <article class="movie-scene-card">
+            <h3>Scene ${index + 1}: ${escapeText(scene.title)}</h3>
+            <p><strong>📍 Location:</strong> ${escapeText(scene.location)}</p>
+            <p><strong>🎭 Action:</strong> ${escapeText(scene.visualDescription)}</p>
+            <div class="scene-dialogue">
+              <strong>💬 Dialogue</strong>
+              ${(scene.dialogue || []).map(line => `
+                <p><strong>${escapeText(line.character)}:</strong> ${escapeText(line.line)}</p>
+              `).join("") || "<p>No dialogue specified.</p>"}
+            </div>
+            <button type="button" class="generate-scene-image" data-scene-index="${index}">
+              🎨 Generate Scene Image
+            </button>
+            <p class="scene-image-status" aria-live="polite"></p>
+            <div class="scene-image-result"></div>
+          </article>
+        `).join("")}
+      `;
+
+      downloadButton.hidden = false;
+      status.textContent = "✅ Your scene plan is ready!";
+
+    } catch (error) {
+      status.textContent = `❌ ${error.message}`;
+    } finally {
+      buildButton.disabled = false;
+    }
+  });
+
+  results.addEventListener("click", async (event) => {
+    const button = event.target.closest(".generate-scene-image");
+    if (!button || !currentPlan) return;
+
+    const index = Number(button.dataset.sceneIndex);
+    const scene = currentPlan.scenes[index];
+    const card = button.closest(".movie-scene-card");
+    const imageStatus = card.querySelector(".scene-image-status");
+    const imageResult = card.querySelector(".scene-image-result");
+
+    if (!scene) return;
+
+    button.disabled = true;
+    imageStatus.textContent = "🎨 Generating illustration... Please wait.";
+    imageResult.innerHTML = "";
+
+    try {
+      const response = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          prompt: scene.imagePrompt
+        })
+      });
+
+      if (!response.ok) {
+        let message = "Image generation failed.";
+        try {
+          const data = await response.json();
+          message = data.error || message;
+        } catch {}
+        throw new Error(message);
+      }
+
+      const blob = await response.blob();
+      const imageUrl = URL.createObjectURL(blob);
+      const downloadName = `zip-ai-scene-${index + 1}.png`;
+
+      imageResult.innerHTML = `
+        <img
+          src="${imageUrl}"
+          alt="${escapeText(scene.title)}"
+          style="display:block;width:100%;max-width:600px;height:auto;border-radius:12px;margin-top:12px"
+        >
+        <a
+          href="${imageUrl}"
+          download="${downloadName}"
+          class="scene-download-link"
+        >📥 Download Scene Image</a>
+      `;
+
+      imageStatus.textContent = "✅ Illustration ready!";
+
+    } catch (error) {
+      imageStatus.textContent = `❌ ${error.message}`;
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  downloadButton.addEventListener("click", () => {
+    if (!currentPlan) return;
+
+    const lines = [currentPlan.movieTitle || "ZIP AI Movie Plan", ""];
+
+    currentPlan.scenes.forEach((scene, index) => {
+      lines.push(
+        `SCENE ${index + 1}: ${scene.title}`,
+        `Location: ${scene.location}`,
+        `Action: ${scene.visualDescription}`,
+        "Dialogue:"
+      );
+
+      (scene.dialogue || []).forEach(line => {
+        lines.push(`${line.character}: ${line.line}`);
+      });
+
+      lines.push(`Image prompt: ${scene.imagePrompt}`, "", "--------------------", "");
+    });
+
+    const blob = new Blob([lines.join("\n")], {
+      type: "text/plain;charset=utf-8"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "zip-ai-scene-plan.txt";
+    link.click();
+    URL.revokeObjectURL(url);
+  });
+})();

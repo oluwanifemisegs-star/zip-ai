@@ -197,6 +197,163 @@ app.post("/api/generate-image", async (req, res) => {
     });
   }
 });
+// ZIP AI — AI MOVIE SCENE BUILDER
+app.post("/api/scene-plan", async (req, res) => {
+  try {
+    const { screenplay, style, language } = req.body || {};
+
+    if (typeof screenplay !== "string" || screenplay.trim().length < 20) {
+      return res.status(400).json({
+        error: "Please generate a screenplay first."
+      });
+    }
+
+    if (screenplay.length > 12000) {
+      return res.status(400).json({
+        error: "The screenplay is too long. Please shorten it and try again."
+      });
+    }
+
+    if (!process.env.GROQ_API_KEY) {
+      return res.status(503).json({
+        error: "The AI scene builder is not configured."
+      });
+    }
+
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "openai/gpt-oss-120b",
+          temperature: 0.5,
+          max_tokens: 4500,
+          messages: [
+            {
+              role: "system",
+              content: `You are ZIP AI's movie scene planner.
+Convert the supplied screenplay into 4 to 8 sequential scenes.
+Return ONLY valid JSON, with no Markdown fences, using this structure:
+{
+  "movieTitle": "Title",
+  "scenes": [
+    {
+      "number": 1,
+      "title": "Scene title",
+      "location": "Location and time",
+      "visualDescription": "Describe the visible action",
+      "dialogue": [
+        {"character": "Character name", "line": "Spoken dialogue"}
+      ],
+      "imagePrompt": "Detailed image-generation prompt"
+    }
+  ]
+}
+Rules:
+- Keep the scenes in story order.
+- Preserve character names and story continuity.
+- Include 1 to 3 dialogue lines per scene when appropriate.
+- Make every imagePrompt detailed and suitable for an AI image generator.
+- Keep character appearances, clothing, and animation style consistent.
+- Do not claim these still images are finished videos.
+- Use the requested language for dialogue.
+- Return valid JSON only.`
+            },
+            {
+              role: "user",
+              content: `Animation style: ${String(style || "2D Cartoon").slice(0, 50)}
+Language: ${String(language || "English").slice(0, 50)}
+
+Screenplay:
+${screenplay.trim()}`
+            }
+          ]
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error(
+        "Scene planner API error:",
+        response.status,
+        data.error?.message || "Request failed"
+      );
+
+      return res.status(502).json({
+        error: response.status === 429
+          ? "The AI service is busy or its usage limit has been reached."
+          : "The AI scene planner could not complete the request."
+      });
+    }
+
+    const content = data.choices?.[0]?.message?.content;
+
+    if (!content) {
+      return res.status(502).json({
+        error: "The AI returned an empty scene plan."
+      });
+    }
+
+    let plan;
+
+    try {
+      const cleaned = content
+        .replace(/^```(?:json)?\s*/i, "")
+        .replace(/\s*```$/, "")
+        .trim();
+
+      plan = JSON.parse(cleaned);
+    } catch {
+      return res.status(502).json({
+        error: "The AI returned an invalid scene plan. Please try again."
+      });
+    }
+
+    if (
+      !plan ||
+      !Array.isArray(plan.scenes) ||
+      plan.scenes.length === 0
+    ) {
+      return res.status(502).json({
+        error: "No scenes were returned. Please try again."
+      });
+    }
+
+    plan.scenes = plan.scenes.slice(0, 8).map((scene, index) => ({
+      number: index + 1,
+      title: String(scene.title || `Scene ${index + 1}`).slice(0, 150),
+      location: String(scene.location || "Unspecified location").slice(0, 300),
+      visualDescription: String(
+        scene.visualDescription || ""
+      ).slice(0, 2000),
+      dialogue: Array.isArray(scene.dialogue)
+        ? scene.dialogue.slice(0, 5).map(line => ({
+            character: String(line.character || "Character").slice(0, 100),
+            line: String(line.line || "").slice(0, 500)
+          }))
+        : [],
+      imagePrompt: String(scene.imagePrompt || "").slice(0, 1800)
+    }));
+
+    res.json({
+      movieTitle: String(plan.movieTitle || "My Movie").slice(0, 150),
+      scenes: plan.scenes
+    });
+
+  } catch (error) {
+    console.error("Scene planner error:", error.message);
+
+    res.status(500).json({
+      error: "Something went wrong while building your scenes."
+    });
+  }
+});
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🎬 ZIP AI running at http://localhost:${PORT}`);
 });

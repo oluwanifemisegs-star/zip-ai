@@ -807,3 +807,150 @@ footer span {
   }
 }
 
+/* ZIP AI — MOVIE MAKER */
+
+.movie-maker-section {
+  margin: 30px auto;
+  padding: 24px;
+  max-width: 1000px;
+  border: 1px solid rgba(140, 110, 255, 0.3);
+  border-radius: 20px;
+  background: linear-gradient(
+    145deg,
+    rgba(35, 25, 65, 0.96),
+    rgba(15, 18, 35, 0.98)
+  );
+  color: #fff;
+}
+
+.movie-maker-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.movie-maker-icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: rgba(140, 110, 255, 0.18);
+  font-size: 30px;
+}
+
+.movie-maker-header h2 {
+  margin: 0 0 6px;
+  font-size: 1.6rem;
+}
+
+.movie-maker-header p {
+  margin: 0;
+  opacity: 0.75;
+}
+
+#build-scenes,
+#download-scene-plan,
+.generate-scene-image {
+  border: 0;
+  border-radius: 12px;
+  padding: 13px 18px;
+  margin: 8px 0;
+  background: linear-gradient(110deg, #8b5cf6, #ec4899);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+#build-scenes:hover,
+#download-scene-plan:hover,
+.generate-scene-image:hover {
+  transform: translateY(-2px);
+}
+
+#build-scenes:disabled,
+.generate-scene-image:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+#scene-status {
+  margin: 16px 0;
+  line-height: 1.6;
+}
+
+.movie-scene-card {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+  overflow-wrap: anywhere;
+}
+
+.movie-scene-card h3 {
+  margin-top: 0;
+  color: #d8b4fe;
+  font-size: 1.15rem;
+}
+
+.movie-scene-card p {
+  line-height: 1.7;
+}
+
+.scene-dialogue {
+  margin-top: 16px;
+  padding: 14px;
+  border-left: 3px solid #c084fc;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.scene-dialogue p {
+  margin: 8px 0;
+}
+
+.scene-image-result img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.scene-download-link {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 11px 15px;
+  border-radius: 10px;
+  background: rgba(139, 92, 246, 0.2);
+  color: #e9d5ff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+#download-scene-plan[hidden] {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .movie-maker-section {
+    margin: 20px 10px;
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .movie-maker-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .movie-scene-card {
+    padding: 14px;
+  }
+
+  #build-scenes,
+  #download-scene-plan,
+  .generate-scene-image {
+    width: 100%;
+  }
+}
