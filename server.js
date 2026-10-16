@@ -354,6 +354,99 @@ ${screenplay.trim()}`
     });
   }
 });
+app.post("/api/voice", async (req, res) => {
+  try {
+    const { text, voice = "chioma_eng", speed = 1.0 } = req.body || {};
+
+    if (typeof text !== "string" || !text.trim()) {
+      return res.status(400).json({
+        error: "Please enter text to generate speech."
+      });
+    }
+
+    if (text.length > 3000) {
+      return res.status(400).json({
+        error: "Please keep your text under 3,000 characters."
+      });
+    }
+
+    const allowedVoices = [
+      "chioma_eng",
+      "james_pidgin",
+      "folami"
+    ];
+
+    if (!allowedVoices.includes(voice)) {
+      return res.status(400).json({
+        error: "Please select a supported voice."
+      });
+    }
+
+    const response = await fetch(
+      "https://abena.mobobi.com/playground/api/v1/tts/synthesize/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          text: text.trim(),
+          voice,
+          speed: Math.min(1.5, Math.max(0.5, Number(speed) || 1))
+        }),
+        signal: AbortSignal.timeout(60000)
+      }
+    );
+
+    if (!response.ok) {
+      console.error("Voice API status:", response.status);
+
+      return res.status(502).json({
+        error: "Voice generation failed. Please try again later."
+      });
+    }
+
+    const contentType = response.headers.get("content-type") || "";
+    let audio;
+
+    if (contentType.includes("application/json")) {
+      const data = await response.json();
+
+      if (data.status !== "success" || !data.audio_base64) {
+        return res.status(502).json({
+          error: "The voice service did not return audio."
+        });
+      }
+
+      audio = Buffer.from(data.audio_base64, "base64");
+    } else if (contentType.includes("audio")) {
+      audio = Buffer.from(await response.arrayBuffer());
+    } else {
+      return res.status(502).json({
+        error: "The voice service returned an unsupported format."
+      });
+    }
+
+    if (!audio.length || audio.length > 15 * 1024 * 1024) {
+      return res.status(502).json({
+        error: "The generated audio is empty or too large."
+      });
+    }
+
+    res.setHeader("Content-Type", "audio/wav");
+    res.setHeader("Content-Disposition", 'inline; filename="zip-ai-voice.wav"');
+    res.setHeader("Cache-Control", "no-store");
+
+    return res.send(audio);
+
+  } catch (error) {
+    console.error("Voice generation error:", error.stack || error.message);
+
+    return res.status(500).json({
+      error: "Could not generate the voice. Please try again."
+    });
+  }
+});
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🎬 ZIP AI running at http://localhost:${PORT}`);
 });

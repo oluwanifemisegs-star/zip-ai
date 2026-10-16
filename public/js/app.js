@@ -662,3 +662,94 @@ generate.addEventListener("click", async () => {
     URL.revokeObjectURL(url);
   });
 })();
+// ZIP AI Voice Generator
+(() => {
+  const textInput = document.getElementById("voice-text");
+  const voiceSelect = document.getElementById("voice-type");
+  const speedSelect = document.getElementById("voice-speed");
+  const generateButton = document.getElementById("generate-voice");
+  const status = document.getElementById("voice-status");
+  const charCount = document.getElementById("voice-char-count");
+  const result = document.getElementById("voice-result");
+  const audio = document.getElementById("voice-audio");
+  const download = document.getElementById("download-voice");
+
+  if (!textInput || !generateButton) return;
+
+  let currentAudioUrl = null;
+
+  textInput.addEventListener("input", () => {
+    charCount.textContent = textInput.value.length;
+  });
+
+  generateButton.addEventListener("click", async () => {
+    const text = textInput.value.trim();
+
+    if (text.length < 1) {
+      status.textContent = "Please enter something for the AI to say.";
+      textInput.focus();
+      return;
+    }
+
+    generateButton.disabled = true;
+    generateButton.textContent = "⏳ Generating voice...";
+    status.textContent = "Your voice is being generated. Please wait.";
+    result.hidden = true;
+
+    try {
+      const response = await fetch("/api/voice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          text,
+          voice: voiceSelect.value,
+          speed: Number(speedSelect.value)
+        })
+      });
+
+      const contentType = response.headers.get("content-type") || "";
+
+      if (!response.ok || !contentType.includes("audio")) {
+        let message = "Voice generation failed. Please try again.";
+
+        try {
+          const data = await response.json();
+          if (data.error) message = data.error;
+        } catch (_) {}
+
+        throw new Error(message);
+      }
+
+      const audioBlob = await response.blob();
+
+      if (!audioBlob.size) {
+        throw new Error("The generated audio file is empty.");
+      }
+
+      if (currentAudioUrl) {
+        URL.revokeObjectURL(currentAudioUrl);
+      }
+
+      currentAudioUrl = URL.createObjectURL(audioBlob);
+      audio.src = currentAudioUrl;
+      download.href = currentAudioUrl;
+      download.download = "zip-ai-voice.wav";
+
+      result.hidden = false;
+      status.textContent = "✅ Voice generated successfully!";
+      audio.load();
+
+    } catch (error) {
+      status.textContent = "❌ " + error.message;
+    } finally {
+      generateButton.disabled = false;
+      generateButton.textContent = "🎙️ Generate Voice";
+    }
+  });
+
+  window.addEventListener("beforeunload", () => {
+    if (currentAudioUrl) URL.revokeObjectURL(currentAudioUrl);
+  });
+})();

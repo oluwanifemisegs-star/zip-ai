@@ -374,7 +374,63 @@
         </article>
       </div>
     </section>
-  </main>
+    <section id="voice-generator" class="voice-generator-section">
+  <div class="section-heading">
+    <span class="section-badge">🎙️ AI AUDIO</span>
+    <h2>Voice Generator</h2>
+    <p>Turn your words into speech for your next movie.</p>
+  </div>
+
+  <div class="voice-generator-card">
+    <label for="voice-text">What should the AI say?</label>
+
+    <textarea
+      id="voice-text"
+      maxlength="3000"
+      placeholder="Enter your dialogue, narration, or story..."
+      rows="6"
+    ></textarea>
+
+    <div class="voice-character-count">
+      <span id="voice-char-count">0</span>/3000 characters
+    </div>
+
+    <div class="voice-controls">
+      <div>
+        <label for="voice-type">Choose a voice</label>
+        <select id="voice-type">
+          <option value="chioma_eng">Chioma — English</option>
+          <option value="james_pidgin">James — Nigerian Pidgin</option>
+          <option value="folami">Folami — Yoruba</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="voice-speed">Speech speed</label>
+        <select id="voice-speed">
+          <option value="0.75">Slow</option>
+          <option value="1" selected>Normal</option>
+          <option value="1.25">Fast</option>
+          <option value="1.5">Very fast</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="generate-voice" type="button">
+      🎙️ Generate Voice
+    </button>
+
+    <p id="voice-status" role="status" aria-live="polite"></p>
+
+    <div id="voice-result" hidden>
+      <audio id="voice-audio" controls preload="none"></audio>
+      <a id="download-voice" download="zip-ai-voice.wav">
+        ⬇️ Download Audio
+      </a>
+    </div>
+  </div>
+</section>
+</main>
 
   <footer>
     <a class="brand" href="#home">ZIP<span>AI</span></a>
