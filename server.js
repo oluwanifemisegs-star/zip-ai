@@ -402,7 +402,9 @@ app.post("/api/voice", async (req, res) => {
     );
 
     if (!response.ok) {
+      const detail = (await response.text()).slice(0, 300);
       console.error("Voice API status:", response.status);
+      console.error("Voice API error details:", detail.replace(/Bearer\s+\S+/gi, "Bearer [REDACTED]"));
 
       return res.status(502).json({
         error: "Voice generation failed. Please try again later."
