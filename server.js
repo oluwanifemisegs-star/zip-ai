@@ -364,9 +364,9 @@ app.post("/api/voice", async (req, res) => {
       });
     }
 
-    if (text.length > 3000) {
+    if (text.length > 500) {
       return res.status(400).json({
-        error: "Please keep your text under 3,000 characters."
+        error: "Please keep your text under 500 characters."
       });
     }
 
@@ -387,7 +387,10 @@ app.post("/api/voice", async (req, res) => {
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          ...(process.env.ABENA_API_KEY
+            ? { "Authorization": `Bearer ${process.env.ABENA_API_KEY}` }
+            : {})
         },
         body: JSON.stringify({
           text: text.trim(),
